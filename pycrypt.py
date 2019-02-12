@@ -29,7 +29,7 @@ def updatescript():
     f.close()
     os.popen('rm update.py')
     print('The script has been updated you can now restart it for it to take effect')
-    exit(0)
+    stop()
 
 def hashcatmd5menu():
     try:
