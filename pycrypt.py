@@ -19,6 +19,18 @@ import re
 import subprocess
 
 
+def updatescript():
+    os.popen('curl -o update.py -L https://raw.githubusercontent.com/OsOmE1/pycrypt/master/pycrypt.py').read()
+    updatedscript = open('update.py', 'r').read()
+    from sys import argv
+    script = argv
+    f = open(script[0], 'w')
+    f.write(updatedscript)
+    f.close()
+    os.popen('rm update.py')
+    print('The script has been updated you can now restart it for it to take effect')
+    exit(0)
+
 def hashcatmd5menu():
     try:
         os.system('clear')
@@ -298,6 +310,8 @@ def sha256menu():
         print(colored('Fernet SHA256 options', 'blue'))
         print('---------------------------')
         print(colored('2. Generate Fernet Key', 'green'))
+        print(colored('3. Encrypt String with random key', 'green'))
+        print(colored('4. Encrypt String with your own key', 'green'))
         option = str(input('> '))
         if option == '0':
             stop()
@@ -317,6 +331,70 @@ def sha256menu():
             print("============================================")
             print(str(key.decode()))
             print("============================================")
+            wait()
+            sha256menu()
+        elif option == '3':
+            keyword = b"8cdb4f710a277214de7bcdf8e1cc7569"
+            salt = os.urandom(16)
+            kdf = PBKDF2HMAC(
+                algorithm=hashes.SHA256(),
+                length=32,
+                salt=salt,
+                iterations=100000,
+                backend=default_backend()
+            )
+            key = base64.urlsafe_b64encode(kdf.derive(keyword))
+            f = Fernet(key)
+            data = str(input(colored('Insert the text you want to encrypt here: ', 'yellow')))
+            while not data:
+                data = str(input(colored('Insert the text you want to encrypt here: ', 'yellow')))
+            data_enc = data.encode()
+            dataenc = f.encrypt(data_enc)
+            fdata = dataenc.decode()
+            equals = ""
+            print('Key:')
+            print("============================================")
+            print(str(key.decode()))
+            print("============================================")
+            print('Data:')
+            for char in fdata:
+                equals = equals + '='
+            print(equals)
+            print(str(fdata))
+            print(equals)
+            wait()
+            sha256menu()
+        elif option == '4':
+            key = input(colored('Insert Your key: ', 'yellow'))
+            while not key:
+                key = input(colored('Insert Your key: ', 'yeloow'))
+            try:
+                f = Fernet(key.encode())
+            except:
+                print(colored('Please insert a valid key', 'red'))
+                wait()
+                sha256menu()
+            data = str(input(colored('Insert the text you want to encrypt here: ', 'yellow')))
+            while not data:
+                data = str(input(colored('Insert the text you want to encrypt here: ', 'yellow')))
+            data_enc = data.encode()
+            try:
+                dataenc = f.encrypt(data_enc)
+                fdata = dataenc.decode()
+                equals = ""
+                print('\n')
+                print('Key:')
+                print("============================================")
+                print(str(key))
+                print("============================================")
+                print('Data:')
+                for char in fdata:
+                    equals = equals + '='
+                print(equals)
+                print(str(fdata))
+                print(equals)
+            except:
+                print(colored('Please insert a valid key', 'red'))
             wait()
             sha256menu()
         else:
@@ -470,6 +548,7 @@ def mainmenu():
         else:
             print(colored('4. Hashcat MD5 Cracking Menu', 'green'))
         print('----------------')
+        print(colored('5. Update the script', 'green'))
         option = str(input('> '))
         if option == '0':
             print(colored('Ok script exiting..', 'red'))
@@ -490,6 +569,8 @@ def mainmenu():
                 mainmenu()
             else:
                 hashcatmd5menu()
+        elif option == '5':
+            updatescript()
         else:
             print('Please select a valid option')
             wait()
