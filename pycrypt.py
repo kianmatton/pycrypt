@@ -62,7 +62,7 @@ def hashcatmd5menu():
             brutelength = ""
             for i in range(int(passlength)):
                 brutelength = brutelength + '?a'
-            command = 'hashcat -a 3 -m 0 hashtemp.hash ' + brutelength
+            command = 'hashcat --potfile-disable -a 3 -m 0 hashtemp.hash ' + brutelength
             os.system(command)
             wait()
             hashcatmd5menu()
