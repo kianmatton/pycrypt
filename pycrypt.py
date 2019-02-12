@@ -21,7 +21,11 @@ import subprocess
 
 def updatescript():
     os.popen('curl -o update.py -L https://raw.githubusercontent.com/OsOmE1/pycrypt/master/pycrypt.py').read()
-    updatedscript = open('update.py', 'r').read()
+    try:
+        updatedscript = open('update.py', 'r').read()
+    except:
+        print(colored('File cant be downloaded', 'red'))
+        stop()
     from sys import argv
     script = argv
     f = open(script[0], 'w')
@@ -514,7 +518,7 @@ def md5menu():
         if awnser.lower() == 'y':
             stop()
         elif awnser.lower() == 'n':
-            wpa2menu()
+            md5menu()
         else:
             print(colored('Invalid option selected!', 'red'))
             wait()
