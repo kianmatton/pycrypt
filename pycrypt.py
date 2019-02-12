@@ -20,11 +20,15 @@ import subprocess
 
 
 def updatescript():
-    os.popen('curl -o update.py -L https://raw.githubusercontent.com/OsOmE1/pycrypt/master/pycrypt.py').read()
+    try:
+        os.popen('curl -o update.py -L https://raw.githubusercontent.com/OsOmE1/pycrypt/master/pycrypt.py').read()
+    except:
+        print(colored('File cant be downloaded', 'red'))
+        stop()
     try:
         updatedscript = open('update.py', 'r').read()
     except:
-        print(colored('File cant be downloaded', 'red'))
+        print(colored('Could not resolve file', 'red'))
         stop()
     from sys import argv
     script = argv
