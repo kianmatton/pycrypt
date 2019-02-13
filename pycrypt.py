@@ -19,6 +19,13 @@ import platform
 import re
 import subprocess
 
+def canconvertoint(string):
+    try:
+        l = int(string)
+        return True
+    except:
+        return False
+
 def updatescript():
     try:
         os.popen('curl -o update.py -L https://raw.githubusercontent.com/OsOmE1/pycrypt/master/pycrypt.py').read()
