@@ -72,8 +72,10 @@ def hashcatmd5menu():
             f.write(hash)
             f.close()
             passlength = input(colored('Input length: ', 'yellow'))
-            while not passlength:
+            isint = canconvertoint(passlength)
+            while not passlength or isint == False:
                 passlength = input(colored('Input length: ', 'yellow'))
+                isint = canconvertoint(passlength)
             brutelength = ""
             for i in range(int(passlength)):
                 brutelength = brutelength + '?a'
