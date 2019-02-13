@@ -7,6 +7,7 @@ aircrackinstall = False
 crunchinstall = False
 currentframe = None
 updateisavailable = False
+requestsinstall = False
 uninstalledapps = []
 from time import sleep
 import sys
@@ -17,7 +18,6 @@ import signal
 import platform
 import re
 import subprocess
-
 
 def updatescript():
     try:
@@ -559,7 +559,6 @@ def mainmenu():
         print(colored('5. Update the script', 'green'))
         option = str(input('> '))
         if option == '0':
-            print(colored('Ok script exiting..', 'red'))
             stop()
         elif option == '1':
             md5menu()
@@ -568,12 +567,14 @@ def mainmenu():
         elif option == '3':
             if aircrackinstall == False or crunchinstall == False:
                 print(colored('This option is not available because you dont have the nessecairy tools installed!', 'red'))
+                wait()
                 mainmenu()
             else:
                 wpa2menu()
         elif option == '4':
             if hashcatinstall == False:
                 print(colored('This option is not available because you dont have the nessecairy tools installed!', 'red'))
+                wait()
                 mainmenu()
             else:
                 hashcatmd5menu()
@@ -600,7 +601,7 @@ def mainmenu():
 def printcreds():
     print(colored("=====================================PYCRYPT====================================", 'green'))
     print(colored("====================================By OsOmE1===================================", 'green'))
-    print(colored("===================================Version 1.0==================================", 'green'))
+    print(colored("===================================Version 1.2==================================", 'green'))
     print('')
     print('')
 
@@ -634,7 +635,6 @@ def stop():
     print(colored('Scipt exiting..', 'red'))
     sleep(1)
     exit(0)
-
 
 operatingsytem = platform.system()
 if operatingsytem == "Darwin":
@@ -673,7 +673,13 @@ try:
         print('Termcolor... Error')
         awnser = input('You dont have termcolor installed the script needs it to continue do you want to install it now? [Y/N] ')
         if awnser.lower() == "y":
-            os.system('pip3 install termcolor')
+            if internet == True:
+                os.system('pip3 install termcolor')
+            else:
+                print('You do not have a valid internet connection')
+                print('Scipt exiting..')
+                sleep(1)
+                exit(0)
         elif awnser.lower() == "n":
             print('\n')
             print(colored('Clearing temp files..'))
@@ -682,6 +688,13 @@ try:
             sleep(1)
             exit(0)
     sleep(0.5)
+    try:
+        import requests
+        requestsinstall = True
+        print('Requests... ' + colored('OK', 'green'))
+    except:
+        print('Requests... ' + colored('Error', 'red'))
+        requestsinstall = False
 
     def is_tool(name):
         from shutil import which
@@ -749,74 +762,105 @@ try:
             colorinstall = True
         elif str(awnser.lower()) == 'n':
             stop()
+    if requestsinstall == False:
+        print('\n')
+        awnser = input(colored('Requests is not installed do you want to install it now? [Y/N] ', 'red'))
+        if str(awnser.lower()) == 'y':
+            os.system('pip3 install requests')
+            requestsinstall = True
+        elif str(awnser.lower()) == 'n':
+            stop()
+    def internetcheck():
+        import requests
+        s = requests.Session()
+        try:
+            s.get('https://github.com/OsOmE1')
+            return True
+        except:
+            return False
+    internet = internetcheck()
     if hashlibinstall == False:
         print('\n')
         awnser = input(colored('Hashlib is not installed do you want to install it now? [Y/N] ', 'red'))
         if str(awnser.lower()) == 'y':
-            os.system('pip3 install hashlib')
-            hashlibinstall = True
+            if internet == True:
+                os.system('pip3 install hashlib')
+                hashlibinstall = True
+            else:
+                print(colored('You do not have a valid internet connection', 'red'))
+                stop()
         elif str(awnser.lower()) == 'n':
             stop()
     if cryptographyinstall == False:
         print('\n')
         awnser = input(colored('Cryptography is not installed do you want to install it now? [Y/N] ', 'red'))
         if str(awnser.lower()) == 'y':
-            os.system('pip3 install cryptography')
-            cryptographyinstall = True
+            if internet == True:
+                os.system('pip3 install cryptography')
+                cryptographyinstall = True
+            else:
+                print(colored('You do not have a valid internet connection', 'red'))
+                stop()
         elif str(awnser.lower()) == 'n':
             stop()
     if brewinstall == False:
         print('\n')
         awnser = input(colored('Brew is not installed it is required to install optional tools do you want to install it now? [Y/N] ', 'red'))
         if str(awnser.lower()) == 'y':
-            os.popen('/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"').read()
-            print(colored('Homebrew installed!', 'blue'))
-            updateisavailable = True
-        else:
-            updateisavailable = False
-    else:
-        pass
-    if not uninstalledapps:
-        pass
-    elif uninstalledapps:
-        os.system('clear')
-        print('Uninstalled Tools')
-        print('====================')
-        print('\n')
-        toolnum = 1
-        for tool in uninstalledapps:
-            print(str(toolnum) + '. ' + tool.capitalize())
-            toolnum = toolnum + 1
-        if brewinstall == False:
-            awnser = input(colored('Brew is not installed it is required to install optional tools do you want to install it now? [Y/N] ', 'red'))
-            if str(awnser.lower()) == 'y':
+            if internet == True:
                 os.popen('/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"').read()
                 print(colored('Homebrew installed!', 'blue'))
                 updateisavailable = True
             else:
+                print(colored('You do not have a valid internet connection', 'red'))
                 updateisavailable = False
-        elif updateisavailable == True:
-            opt1 = input(colored('The Tools listed above are not installed do you want to install them to achieve full script functionality? [Y/N]', 'yellow'))
-            if str(opt1.lower()) == "y":
-                for tool in uninstalledapps:
-                    if macosx == True:
-                        print(colored('Installing ' + tool.capitalize() + '....', 'blue'))
-                        os.popen('brew install ' + tool).read()
-                        print(colored(tool.capitalize() + ' installed!', 'blue'))
-                        fullfunc = True
-                    elif Linux == True:
-                        print(colored('Installing ' + tool.capitalize() + '....', 'blue'))
-                        os.popen('sudo apt-get install ' + tool).read()
-                        print(colored(tool.capitalize() + ' installed!', 'blue'))
-                        fullfunc = True
-            else:
-                fullfunc = False
-                pass
-            if fullfunc == True:
-                hashcatinstall = True
-                aircrackinstall = True
-                crunchinstall = True
-
+        else:
+            updateisavailable = False
+    else:
+        pass
+    if internet == True:
+        if not uninstalledapps:
+            pass
+        elif uninstalledapps:
+            os.system('clear')
+            print('Uninstalled Tools')
+            print('====================')
+            print('\n')
+            toolnum = 1
+            for tool in uninstalledapps:
+                print(str(toolnum) + '. ' + tool.capitalize())
+                toolnum = toolnum + 1
+            if brewinstall == False:
+                awnser = input(colored('Brew is not installed it is required to install optional tools do you want to install it now? [Y/N] ', 'red'))
+                if str(awnser.lower()) == 'y':
+                    os.popen('/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"').read()
+                    print(colored('Homebrew installed!', 'blue'))
+                    updateisavailable = True
+                else:
+                    updateisavailable = False
+            elif updateisavailable == True:
+                opt1 = input(colored('The Tools listed above are not installed do you want to install them to achieve full script functionality? [Y/N]', 'yellow'))
+                if str(opt1.lower()) == "y":
+                    for tool in uninstalledapps:
+                        if macosx == True:
+                            print(colored('Installing ' + tool.capitalize() + '....', 'blue'))
+                            os.popen('brew install ' + tool).read()
+                            print(colored(tool.capitalize() + ' installed!', 'blue'))
+                            fullfunc = True
+                        elif Linux == True:
+                            print(colored('Installing ' + tool.capitalize() + '....', 'blue'))
+                            os.popen('sudo apt-get install ' + tool).read()
+                            print(colored(tool.capitalize() + ' installed!', 'blue'))
+                            fullfunc = True
+                else:
+                    fullfunc = False
+                    pass
+                if fullfunc == True:
+                    hashcatinstall = True
+                    aircrackinstall = True
+                    crunchinstall = True
+        else:
+            print(colored('Cant install tool because you have no valid internet connection'))
 
 except KeyboardInterrupt:
     os.system('clear')
